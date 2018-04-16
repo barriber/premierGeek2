@@ -1,22 +1,23 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from "react-router-dom";
+import { Link  } from "react-router-dom";
 import './Header.scss';
 
-class Header extends PureComponent {
+class Header extends Component {
     render() {
         return (
-            <div className="premier-geek-header">
+            <div className="premier-geek-header flex items-center justify-between ph3">
                 <div>
-                    <Link to="/">Premier Geek</Link>
+                    <Link  to="/">Premier Geeks</Link >
+                </div>
+                <div>
+                    <Link  to="/login" className="mr4">Signup</Link >
+                    <Link  to="/login">Login</Link >
                 </div>
             </div>
         );
     }
 }
 
-Header.propTypes = {
-
-};
 
 export default Header;

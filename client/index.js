@@ -2,6 +2,7 @@ import React from "react";
 import Amplify from 'aws-amplify';
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
+import 'tachyons';
 import './config';
 import App from './src/App'
 
