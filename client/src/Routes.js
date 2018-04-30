@@ -4,13 +4,15 @@ import { Switch, Route } from 'react-router-dom';
 import Home from './Home';
 import Login from './Login';
 import PageNotFound from './PageNotFound';
+import AppliedRoute from './AppliedRoute';
 
 class Routes extends Component {
     render() {
+        const { childProps } = this.props;
         return (
             <Switch>
-                <Route path="/" exact component={Home} />
-                <Route path="/login" component={Login} />
+                <AppliedRoute path="/" exact component={Home} props={childProps} />
+                <AppliedRoute path="/login" exact component={Login} props={childProps} />
                 <Route component={PageNotFound} />
             </Switch>
         );

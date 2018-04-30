@@ -12,27 +12,34 @@ class App extends Component {
     }
 
     async componentDidMount() {
-        try {
-          if (await Auth.currentSession()) {
-              console.log('xxx ')
-            // this.userHasAuthenticated(true);
-          }
-        }
-        catch(e) {
-          if (e !== 'No current user') {
-            alert(e);
-          }
-        }
+        // try {
+        //   if (await Auth.currentSession()) {
+        //     this.userHasAuthenticated(true);
+        //   }
+        // }
+        // catch(e) {
+        //   if (e !== 'No current user') {
+        //     // alert(e);
+        //   }
+        // }
       
-        this.setState({ isAuthenticating: false });
+        // this.setState({ isAuthenticating: false });
       }
-      
+
+    userHasAuthenticated = authenticated => {
+        this.setState({ isAuthenticated: authenticated });
+      }
+
     render() {
+        const childProps = {
+            isAuthenticated: this.state.isAuthenticated,
+            userHasAuthenticated: this.userHasAuthenticated
+        };
         return (
             <Fragment>
-                <Header />
+                <Header childProps={childProps} />
                 <div className="flex flex-grow-1">
-                <Routes />
+                    <Routes childProps={childProps} />
                 </div>
             </Fragment>
         );

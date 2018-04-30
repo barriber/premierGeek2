@@ -5,6 +5,7 @@ jspm_packages
 # Serverless directories
 .serverless
 
+.cache
 
 #client
 client/node_modules

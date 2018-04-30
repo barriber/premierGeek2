@@ -18,10 +18,17 @@ export default class Login extends PureComponent {
         event.preventDefault();
 
         try {
-            await Auth.signIn(this.state.email, this.state.password);
-            alert("Logged in");
+            const x = await Auth.signIn(this.state.email, this.state.password);
+            if(x.challengeName === "NEW_PASSWORD_REQUIRED") {
+                const complete = Auth.completeNewPassword(x, '123456') 
+            }
+            console.log(x);
+            let session = await Auth.currentAuthenticatedUser();
+            console.log(session);
+            this.props.userHasAuthenticated(true);
         } catch (e) {
-            alert(e.message);
+            console.log(e);
+            alert(e);
         }
     }
 
@@ -30,7 +37,7 @@ export default class Login extends PureComponent {
             <div className="flex flex-column items-center flex-grow-1 justify-center flex-grow-1">
                 <input type="email" id="email" value={this.state.email} onChange={this.handleChange} />
                 <input type="password" id="password" value={this.state.password} className="mv3" onChange={this.handleChange} />
-                <Button variant="raised" color="primary" >
+                <Button variant="raised" color="primary" onClick={this.handleSubmit}>
                     Login
                 </Button>
             </div>
