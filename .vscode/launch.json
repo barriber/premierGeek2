@@ -7,6 +7,21 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Serverless",
+            "cwd": "${workspaceFolder}/node_modules/serverless/bin/serverless",
+            "runtimeExecutable": "npm",
+            "args": [
+                "invoke",
+                "local",
+                "--function",
+                "get",
+                "--data",
+                "{}"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "parcel devServer",
             "cwd": "${workspaceRoot}/client",
             "runtimeExecutable": "npm",
