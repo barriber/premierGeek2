@@ -1,11 +1,10 @@
 {
-  "name": "PremierGeek",
+  "name": "premiergeek",
   "version": "1.0.0",
   "description": "",
   "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "boris": "parcel ./client/index.html"
+    "test": "echo \"Error: no test specified\" && exit 1"   
   },
   "keywords": [],
   "author": "",

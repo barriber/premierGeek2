@@ -1,5 +1,5 @@
-
+const success = require('./libs/response').success;
 
 module.exports.main = (event, context, callback) => {
-    callback(null, "Manchester United!!");
+    callback(null, success("Manchester United!!"));
 }

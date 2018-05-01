@@ -20,7 +20,7 @@ Amplify.configure({
     API: {
         endpoints: [
             {
-                name: "premierGeek",
+                name: "premierGeek-dev-hello",
                 endpoint: awsConfig.apiGateway.URL,
                 region: awsConfig.apiGateway.REGION
             },

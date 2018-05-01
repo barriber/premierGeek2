@@ -35,11 +35,11 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  get:
+  fixtures:
     handler: create.main
     events:
      - https:
-         path: users/create
+         path: fixtures
          method: get
          cors: true
          authorizer: aws_iam
