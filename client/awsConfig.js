@@ -3,7 +3,7 @@ const region = 'us-east-1';
 export default {
     apiGateway: {
       REGION: region,
-      URL: 'https://m3fjeq60jd.execute-api.us-east-1.amazonaws.com/dev/',
+      URL: 'https://xmti7wo0fc.execute-api.us-east-1.amazonaws.com/dev/',
     },
     cognito: {
       REGION: region,

@@ -21,7 +21,7 @@ class Home extends PureComponent {
     }
 
     notes = () => {
-        return API.get("premierGeek-dev-hello", "users/create");
+        return API.get("premiergeek-api-dev-fixtures", "fixtures/fixtures");
     }
 
     render() {
