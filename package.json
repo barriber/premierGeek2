@@ -22,5 +22,7 @@
     "webpack-node-externals": "^1.7.2",
     "serverless": "^1.27.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.18.0"
+  }
 }

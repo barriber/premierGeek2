@@ -6,7 +6,7 @@
 //     return buildResponse(500, body);
 //   }
   
-  function buildResponse(statusCode, body) {
+  function  buildResponse(statusCode, body) {
     return {
       statusCode: statusCode,
       headers: {

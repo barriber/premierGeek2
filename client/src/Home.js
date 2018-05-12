@@ -4,24 +4,17 @@ import { API } from "aws-amplify";
 
 class Home extends PureComponent {
     async componentDidMount() {
-        // if (!this.props.isAuthenticated) {
-        //     return;
-        // }
+         
 
         try {
-            const notes = await this.notes();
-            consoel.log(notes);
-            this.setState({ notes });
+            const x = await API.get("premiergeek-api-dev-fixtures", "fixtures");
+
+            this.setState({ x });
         } catch (e) {
             console.log(e);
-            alert(e);
         }
 
         this.setState({ isLoading: false });
-    }
-
-    notes = () => {
-        return API.get("premiergeek-api-dev-fixtures", "fixtures/fixtures");
     }
 
     render() {
