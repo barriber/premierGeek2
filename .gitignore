@@ -6,6 +6,7 @@ jspm_packages
 .serverless
 
 .cache
+.idea
 
 #client
 client/node_modules
