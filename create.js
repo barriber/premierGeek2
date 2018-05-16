@@ -11,7 +11,9 @@ let con = mysql.createConnection({
 con.connect();
 
 module.exports.main = async (event, context, callback) => {
-    const sql = "SELECT fixtures.id, homeTeam.name as homeTeamName, awayTeam.name as awayTeam FROM fixtures " +
+    const sql = "SELECT fixtures.id, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName," +
+        "awayTeam.logo as awayLogo, homeTeam.logo as homeLogo" +
+        " FROM fixtures " +
         "JOIN teams homeTeam ON fixtures.homeTeamId = homeTeam.id " +
         "JOIN teams awayTeam ON fixtures.awayTeamId = awayTeam.id";
     con.query(sql, function (err, result) {

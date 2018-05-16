@@ -2,11 +2,14 @@
   "name": "premiergeek",
   "version": "1.0.0",
   "description": "",
-  "main": "handler.js",
+  "main": "create.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": " "
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -17,12 +20,14 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-3": "^6.24.1",
+    "serverless": "^1.27.2",
+    "serverless-offline": "^3.21.1",
     "serverless-webpack": "^5.1.1",
     "webpack": "^4.5.0",
-    "webpack-node-externals": "^1.7.2",
-    "serverless": "^1.27.0"
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "axios": "^0.18.0"
+    "axios": "^0.18.0",
+    "mysql": "^2.15.0"
   }
 }
