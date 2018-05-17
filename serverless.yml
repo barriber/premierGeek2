@@ -5,12 +5,12 @@ provider:
   runtime: nodejs8.10
   stage: dev
   region: us-east-1
-
-#  iamRoleStatements:
-  #  - Effect: "Allow"
-    #  Action:
-      #  - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "rds:*"
+        - "s3:ListBucket"
+      Resource: "*"
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:PutObject"

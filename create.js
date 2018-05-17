@@ -8,17 +8,28 @@ let con = mysql.createConnection({
     password : '12345678',
     database : 'noam',
 });
-con.connect();
+console.log('================');
+con.connect(function(err) {
+    if(err) {
+        console.log('BORIS ERROR!!!!!');
+        console.log(err);
+    }
+});
 
-module.exports.main = async (event, context, callback) => {
+module.exports.main = (event, context, callback) => {
+    console.log('xxxxxxxxx')
     const sql = "SELECT fixtures.id, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName," +
         "awayTeam.logo as awayLogo, homeTeam.logo as homeLogo" +
         " FROM fixtures " +
         "JOIN teams homeTeam ON fixtures.homeTeamId = homeTeam.id " +
         "JOIN teams awayTeam ON fixtures.awayTeamId = awayTeam.id";
     con.query(sql, function (err, result) {
-        if (err) throw err;
-        // console.log(JSON.parse(result));
+        console.log('--------');
+        if (err) {
+            console.log('*****************');
+            throw err;
+        };
+        console.log(context);
         con.end();
         callback(null, success(result));
     });
