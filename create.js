@@ -18,11 +18,11 @@ con.connect(function(err) {
 
 module.exports.main = (event, context, callback) => {
     console.log('xxxxxxxxx')
-    const sql = "SELECT fixtures.id, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName," +
-        "awayTeam.logo as awayLogo, homeTeam.logo as homeLogo" +
-        " FROM fixtures " +
+    const sql = "SELECT fixtures.id, fixtures.date, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName, " +
+        "awayTeam.logo as awayLogo, homeTeam.logo as homeLogo " +
+        "FROM fixtures " +
         "JOIN teams homeTeam ON fixtures.homeTeamId = homeTeam.id " +
-        "JOIN teams awayTeam ON fixtures.awayTeamId = awayTeam.id";
+        "JOIN teams awayTeam ON fixtures.awayTeamId = awayTeam.id ";
     con.query(sql, function (err, result) {
         console.log('--------');
         if (err) {
