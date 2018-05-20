@@ -36,7 +36,6 @@ export default class Login extends PureComponent {
             <FacebookLogin
                 appId="1025583144188581"
                 fields="name,email,picture"
-                onClick={componentClicked}
                 version="3.0"
                 callback={this.responseFacebook} />
         );

@@ -11,7 +11,12 @@ let con = mysql.createPool({
 });
 
 module.exports.main = (event, context, callback) => {
-    console.log('xxxxxxxxx')
+    // console.log('CONTEXT -START')
+    // console.log(JSON.stringify(context));
+    // console.log('CONTEXT -END');
+    console.log('EVENT -START')
+    console.log(JSON.stringify(event));
+    console.log('EVENT -END');
     const sql = "SELECT fixtures.id, fixtures.date, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName, " +
         "awayTeam.logo as awayLogo, homeTeam.logo as homeLogo " +
         "FROM fixtures " +

@@ -31,7 +31,7 @@ package:
     - client/**
 functions:
   fixtures:
-    handler: create.main
+    handler: server/fixtures.main
     events:
      - http:
          path: fixtures
