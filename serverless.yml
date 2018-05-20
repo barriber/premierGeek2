@@ -24,8 +24,13 @@ provider:
 # you can define service wide environment variables here
 #  environment:
 #    variable1: value1
-
-# you can add packaging information here
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+plugins:
+  - serverless-webpack
+  - serverless-offline
 package:
   exclude:
     - client/**
@@ -38,7 +43,6 @@ functions:
          method: get
          cors: true
          authorizer: aws_iam
-
 resources:
   Resources:
     GatewayResponseDefault4XX:
