@@ -1,15 +1,15 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import {API, Auth} from "aws-amplify";
+import Amp, {API, Auth} from "aws-amplify";
 
 class Home extends PureComponent {
     state = {};
 
     async componentDidMount() {
         try {
-            let session = await Auth.currentAuthenticatedUser();
-            console.log(session);
+            // let session = await Auth.userAttributes();
+            // console.log(Amp.FacebookOAuth.refreshFacebookToken());
             const fixtures = await API.get("premiergeek-api-dev-fixtures", "fixtures");
             const orderedGames = _.orderBy(fixtures, ['date'], ['asc']);
             this.setState({fixtures: _.take(orderedGames, 5)});
