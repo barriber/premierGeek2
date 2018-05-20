@@ -2,18 +2,12 @@ const success = require('./libs/response').success;
 const axios = require('axios');
 const mysql = require('mysql');
 
-let con = mysql.createConnection({
+let con = mysql.createPool({
+    connectionLimit : 5,
     host : 'premiergeek.c1t0nwcytv3y.us-east-1.rds.amazonaws.com',
     user : 'noam',
     password : '12345678',
     database : 'noam',
-});
-console.log('================');
-con.connect(function(err) {
-    if(err) {
-        console.log('BORIS ERROR!!!!!');
-        console.log(err);
-    }
 });
 
 module.exports.main = (event, context, callback) => {
@@ -29,7 +23,7 @@ module.exports.main = (event, context, callback) => {
             console.log('*****************');
             throw err;
         };
-        console.log(context);
+
         con.end();
         callback(null, success(result));
     });
