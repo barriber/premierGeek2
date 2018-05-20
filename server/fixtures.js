@@ -1,5 +1,4 @@
-const success = require('./server/libs/response').success;
-const axios = require('axios');
+const success = require('./libs/response').success;
 const mysql = require('mysql');
 
 let con = mysql.createPool({
