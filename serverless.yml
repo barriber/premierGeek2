@@ -45,11 +45,12 @@ functions:
          authorizer: aws_iam
   bets:
     handler: server/bets.placeBet
-    - http:
-         path: bet
-         method: post
-         cors: true
-         authorizer: aws_iam
+    events:
+      - http:
+           path: bet
+           method: post
+           cors: true
+           authorizer: aws_iam
 resources:
   Resources:
     GatewayResponseDefault4XX:

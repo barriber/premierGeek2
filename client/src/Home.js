@@ -20,6 +20,18 @@ class Home extends PureComponent {
         this.setState({isLoading: false});
     }
 
+     placeBet = async () => {
+        const bet = await API.post("premiergeek-api-dev-fixtures", "bets", {
+            body: {
+                fixtureId: 165069,
+                homeTeamScore: 1,
+                awayTeamScore: 2,
+            }
+        });
+
+        consoe.log(bet);
+    }
+
     renderFixtures = () => {
         return this.state.fixtures.map(fixture => {
             return (
@@ -31,6 +43,7 @@ class Home extends PureComponent {
                     <input/>
                     <div className="f-4">{fixture.awayTeamName}</div>
                     <img src={fixture.awayLogo} alt={fixture.awayTeamName}/>
+                    <input type="button" onClick={this.placeBet}/>
                 </div>
             )
         })
