@@ -10,7 +10,7 @@ export function placeBet(event, context, callback) {
     // const awayTeamScore = 0;
     // const user = 'Boirs';
     const sql = 'INSERT INTO bets (fixtureId, homeTeamScore, awayTeamScore, userId) ' +
-        `VALUES (${fixtureId}, ${homeTeamScore}, ${awayTeamScore}, '${user}')`;
+        `VALUES (${fixtureId}, ${homeTeamScore}, ${awayTeamScore}, '${userId}')`;
     con.query(sql, function(err, result) {
         console.log('--------');
         if (err) {
