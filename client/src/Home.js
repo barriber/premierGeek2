@@ -21,7 +21,7 @@ class Home extends PureComponent {
     }
 
      placeBet = async () => {
-        const bet = await API.post("premiergeek-api-dev-fixtures", "bets", {
+        const bet = await API.post("premiergeek-api-dev-fixtures", "bet", {
             body: {
                 fixtureId: 165069,
                 homeTeamScore: 1,
