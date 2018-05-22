@@ -20,16 +20,19 @@ class Home extends PureComponent {
         this.setState({isLoading: false});
     }
 
-     placeBet = async () => {
-        const bet = await API.post("premiergeek-api-dev-fixtures", "bet", {
+     placeBet =  _.debounce(async (type, fixtureId, score) => {
+       await API.post("premiergeek-api-dev-fixtures", "bet", {
             body: {
-                fixtureId: 165069,
-                homeTeamScore: 1,
-                awayTeamScore: 2,
+                fixtureId,
+                [type]: score,
             }
         });
+    }, 1000);
 
-        consoe.log(bet);
+    onChange = (e) => {
+        const {type, fixture} = e.target.dataset;
+        const score  = parseInt(e.target.value);
+        this.placeBet(type, fixture, score);
     }
 
     renderFixtures = () => {
@@ -38,12 +41,11 @@ class Home extends PureComponent {
                 <div className="flex items-center flex-row" key={fixture.id}>
                     <img src={fixture.homeLogo} alt={fixture.homeTeamName}/>
                     <div className="f-4">{fixture.homeTeamName}</div>
-                    <input/>
+                    <input data-type="homeTeamScore" data-fixture={fixture.id} onChange={this.onChange} />
                     -
-                    <input/>
+                    <input data-type="awayTeamScore" data-fixture={fixture.id} onChange={this.onChange} />
                     <div className="f-4">{fixture.awayTeamName}</div>
                     <img src={fixture.awayLogo} alt={fixture.awayTeamName}/>
-                    <input type="button" onClick={this.placeBet}/>
                 </div>
             )
         })
