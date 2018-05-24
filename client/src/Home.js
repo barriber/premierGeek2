@@ -27,13 +27,13 @@ class Home extends PureComponent {
                 [type]: score,
             }
         });
-    }, 1000);
+    }, 500);
 
     onChange = (e) => {
         const {type, fixture} = e.target.dataset;
         const score  = parseInt(e.target.value);
         this.placeBet(type, fixture, score);
-    }
+    };
 
     renderFixtures = () => {
         return this.state.fixtures.map(fixture => {
@@ -41,9 +41,11 @@ class Home extends PureComponent {
                 <div className="flex items-center flex-row" key={fixture.id}>
                     <img src={fixture.homeLogo} alt={fixture.homeTeamName}/>
                     <div className="f-4">{fixture.homeTeamName}</div>
-                    <input data-type="homeTeamScore" data-fixture={fixture.id} onChange={this.onChange} />
+                    <input data-type="homeTeamScore" data-fixture={fixture.id} defaultValue={fixture.betHomeTeam}
+                           onChange={this.onChange} />
                     -
-                    <input data-type="awayTeamScore" data-fixture={fixture.id} onChange={this.onChange} />
+                    <input data-type="awayTeamScore" data-fixture={fixture.id}
+                           defaultValue={fixture.betAwayTeam} onChange={this.onChange} />
                     <div className="f-4">{fixture.awayTeamName}</div>
                     <img src={fixture.awayLogo} alt={fixture.awayTeamName}/>
                 </div>
