@@ -11,12 +11,11 @@ export default class Login extends PureComponent {
 
 
     async componentDidMount() {
-        const user  = await Auth.currentAuthenticatedUser()
-        if(user) {
-           console.log(user);
+        const user = await Auth.currentAuthenticatedUser()
+        if (user) {
+            console.log(user);
         }
     }
-
 
 
     responseFacebook = (loggedInUser) => {
@@ -33,11 +32,14 @@ export default class Login extends PureComponent {
 
     render() {
         return (
-            <FacebookLogin
-                appId="1025583144188581"
-                fields="name,email,picture"
-                version="3.0"
-                callback={this.responseFacebook} />
+            <div className="login-page flex flex-auto items-center justify-center flex-column">
+                <h1 >Welcome to PremierGeek</h1>
+                <FacebookLogin
+                    appId="1025583144188581"
+                    fields="name,email,picture"
+                    version="3.0"
+                    callback={this.responseFacebook}/>
+            </div>
         );
     }
 }

@@ -3,7 +3,7 @@ import "babel-polyfill";
 import React from "react";
 import Amplify from 'aws-amplify';
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router } from "react-router-dom";
+
 import 'tachyons';
 import awsConfig from './awsConfig';
 import App from './src/App'
@@ -15,7 +15,7 @@ Amplify.configure({
         region: awsConfig.cognito.REGION,
         userPoolId: awsConfig.cognito.USER_POOL_ID,
         identityPoolId: awsConfig.cognito.IDENTITY_POOL_ID,
-        userPoolWebClientId: awsConfig.cognito.APP_CLIENT_ID
+        userPoolWebClientId: awsConfig.cognito.APP_CLIENT_ID,
     },
     API: {
         endpoints: [
@@ -28,8 +28,5 @@ Amplify.configure({
     }
 });
 
-ReactDOM.render(
-    <Router>
-        <App />
-    </Router>
-    , document.getElementById("app"));
+ReactDOM.render( <App />,
+    document.getElementById("app"));

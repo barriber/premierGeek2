@@ -1,9 +1,10 @@
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
-import { Auth } from "aws-amplify";
+import React, {Component, Fragment} from 'react';
+import {BrowserRouter as Router} from "react-router-dom";
+import {withAuthenticator} from 'aws-amplify-react';
 import './App.scss';
 import Routes from './Routes';
 import Header from './Header';
+import Login from "./Login";
 
 class App extends Component {
     state = {
@@ -11,24 +12,9 @@ class App extends Component {
         isAuthenticating: true
     }
 
-    async componentDidMount() {
-        // try {
-        //   if (await Auth.currentSession()) {
-        //     this.userHasAuthenticated(true);
-        //   }
-        // }
-        // catch(e) {
-        //   if (e !== 'No current user') {
-        //     // alert(e);
-        //   }
-        // }
-      
-        // this.setState({ isAuthenticating: false });
-      }
-
     userHasAuthenticated = authenticated => {
-        this.setState({ isAuthenticated: authenticated });
-      }
+        this.setState({isAuthenticated: authenticated});
+    }
 
     render() {
         const childProps = {
@@ -36,18 +22,21 @@ class App extends Component {
             userHasAuthenticated: this.userHasAuthenticated
         };
         return (
-            <Fragment>
-                <Header childProps={childProps} />
-                <div className="flex flex-grow-1">
-                    <Routes childProps={childProps} />
-                </div>
-            </Fragment>
+            <Router>
+                <Fragment>
+                    <Header childProps={childProps}/>
+
+                    <div className="flex flex-grow-1">
+                        <Routes childProps={childProps}/>
+                    </div>
+
+                </Fragment>
+            </Router>
+
         );
     }
 }
 
-App.propTypes = {
-
-};
-
-export default App;
+export default withAuthenticator(App, false, [
+    <Login/>,
+]);

@@ -8,11 +8,10 @@ import AppliedRoute from './AppliedRoute';
 
 class Routes extends Component {
     render() {
-        const { childProps } = this.props;
         return (
             <Switch>
-                <AppliedRoute path="/" exact component={Home} props={childProps} />
-                <AppliedRoute path="/login" exact component={Login} props={childProps} />
+                <AppliedRoute path="/" exact component={Home} />
+                <AppliedRoute path="/login" exact component={Login} />
                 <Route component={PageNotFound} />
             </Switch>
         );
