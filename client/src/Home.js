@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import _ from 'lodash';
-import Amp, {API, Auth} from "aws-amplify";
+import {API} from "aws-amplify";
 
 class Home extends PureComponent {
     state = {};
@@ -45,7 +45,7 @@ class Home extends PureComponent {
                     -
                     <input data-type="awayTeamScore" data-fixture={fixture.id}
                            defaultValue={fixture.betAwayTeam} onChange={this.onChange} />
-                    <div className="f-4">{fixture.awayTeamName}</div>
+                    <div className="">{fixture.awayTeamName}</div>
                     <img src={fixture.awayLogo} alt={fixture.awayTeamName}/>
                 </div>
             )
@@ -56,10 +56,9 @@ class Home extends PureComponent {
         if (!this.state.fixtures) {
             return null;
         }
-        const x = this.renderFixtures();
         return (
-            <div className="">
-                {x}
+            <div className="center ">
+                {this.renderFixtures()}
             </div>
         );
     }

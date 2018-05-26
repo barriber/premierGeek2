@@ -51,6 +51,22 @@ functions:
            method: post
            cors: true
            authorizer: aws_iam
+  users:
+    handler: server/users.setUser
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: aws_iam
+  results:
+    handler: server/results.main
+    events:
+     - http:
+         path: results
+         method: get
+         cors: true
+         authorizer: aws_iam
 resources:
   Resources:
     GatewayResponseDefault4XX:

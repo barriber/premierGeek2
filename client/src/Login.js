@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import _ from 'lodash';
-import {Auth} from "aws-amplify";
+import {Auth, API} from "aws-amplify";
 import FacebookLogin from 'react-facebook-login';
 
 export default class Login extends PureComponent {
@@ -18,22 +18,24 @@ export default class Login extends PureComponent {
     }
 
 
-    responseFacebook = (loggedInUser) => {
+    responseFacebook = async (loggedInUser) => {
         if (_.has(loggedInUser, 'accessToken')) {
-            const {accessToken: token, expiresIn} = loggedInUser;
-            Auth.federatedSignIn('facebook', {token}, loggedInUser)
-                .then(credentials => {
-                    console.log('get aws credentials', credentials);
-                }).catch(e => {
-                console.log(e);
+            const {accessToken: token, expiresIn, email, name, picture} = loggedInUser;
+            const credentials = await Auth.federatedSignIn('facebook', {token}, loggedInUser);
+            await API.post("premiergeek-api-dev-fixtures", "users", {
+                body: {
+                    name,
+                    email,
+                    logo: picture.data.url
+                }
             });
         }
-    }
+    };
 
     render() {
         return (
             <div className="login-page flex flex-auto items-center justify-center flex-column">
-                <h1 >Welcome to PremierGeek</h1>
+                <h1>Welcome to PremierGeek</h1>
                 <FacebookLogin
                     appId="1025583144188581"
                     fields="name,email,picture"
