@@ -1,5 +1,5 @@
 {
-  "plugins": ["source-map-support", "transform-runtime"],
+  "plugins": ["source-map-support", "transform-runtime", "transform-object-rest-spread"],
   "presets": [
     ["env", { "node": "8.10" }],
     "stage-3"

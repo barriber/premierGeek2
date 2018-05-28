@@ -1,25 +1,16 @@
 import _ from 'lodash';
 import {success} from './libs/response';
-import mySqlDb from './libs/db';
+import {queryDB} from './libs/db';
 
+const query = 'INSERT INTO bets SET ? ' +
+    'ON DUPLICATE KEY UPDATE ?';
 
-export function placeBet(event, context, callback) {
-    const db = new mySqlDb();
-    const con = db.getConnection();
+export async function placeBet(event, context, callback) {
     const obj = _.pick(JSON.parse(event.body), ['fixtureId', 'homeTeamScore', 'awayTeamScore']);
     obj.userId = event.requestContext.identity.cognitoIdentityId;
 
-    con.query('INSERT INTO bets SET ? ' +
-    'ON DUPLICATE KEY UPDATE ?', [obj, obj], function(err) {
-        console.log('--------');
-        if (err) {
-            console.log('*****************');
-            throw err;
-        }
-
-        con.end();
-        callback(null, success())
-    });
+    await queryDB(query, [obj, obj]);
+    callback(null, success());
 }
 
 // const obj = {

@@ -1,28 +1,71 @@
 import  { success } from './libs/response';
-import mySqlDb from './libs/db';
+import  from './libs/db';
+import _ from 'lodash';
 
-function getGameDirection(homeScore, awayScore) {
+const gamesSql = "SELECT * From fixtures " +
+    "WHERE fixtures.date > NOW()"; //todo change!!
+
+const betsSql = "SELECT * From bets " +
+    "WHERE bets.homeTeamScore IS NOT NULL AND bets.awayTeamScore IS NOT NULL";
+
+function  getGameStats(homeScore, awayScore) {
+    let direction;
+    let goalDifference = homeScore - awayScore;
     if (homeScore === awayScore) {
-        return 0;
+        direction = 0;
+    } else {
+        direction = homeScore > awayScore ? 1 : 2;
     }
 
-    return homeScore > awayScore ? 1 : 2;
+    return {direction, goalDifference};
 }
-export function main(event, context, callback) {
-    const db = new mySqlDb();
-    const con = db.getConnection();
-    const userId = event.requestContext.identity.cognitoIdentityId;
 
-    const sql = "SELECT * From fixtures " +
-        "WHERE fixtures.date < NOW()";
-    con.query(sql, function (err, result) {
-        console.log(result);
-        if (err) {
-            console.log('*****************');
-            throw err;
+function analyzeFixtures(gamesResults) {
+    const fixtureResults = gamesResults.map(({homeTeamScore, awayTeamScore, id}) => {
+        const gameStats = getGameStats(homeTeamScore, awayTeamScore);
+        return {
+            ...gameStats,
+            homeTeamScore,
+            awayTeamScore,
+            id,
+        }
+    });
+
+    return _.keyBy(fixtureResults, 'id');
+}
+export async function main(event, context, callback) {
+    const [gamesResults, bets] = await Promise.all([queryDB(gamesSql), queryDB(betsSql)]);
+    const gamesObj = analyzeFixtures(gamesResults);
+    const analyzedBets = bets.map(({fixtureId, homeTeamScore, awayTeamScore, userId}) => {
+        const betStats = getGameStats(homeTeamScore, awayTeamScore);
+        let score = 0;
+        const game = gamesObj[fixtureId];
+        if (!game) {
+            return {}
         }
 
-        con.end();
-        callback(null, success(result));
+        if (game.direction === betStats.direction) {
+            score += 10;
+            if (game.goalDifference === betStats.goalDifference) {
+                score += 10;
+                if (game.homeTeamScore === betStats.homeTeamScore) {
+                    score += 10;
+                }
+            }
+        }
+
+        return {
+            fixtureId,
+            userId,
+            score,
+            betHomeScore: homeTeamScore,
+            betAwayScore: awayTeamScore,
+            homeTeamScore: game.homeTeamScore,
+            awayTeamScore: game.awayTeamScore
+        }
     });
+
+    const result = _.groupBy(analyzedBets, 'userId');
+
+    callback(null, success(result));
 }
