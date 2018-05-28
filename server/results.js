@@ -1,5 +1,5 @@
 import  { success } from './libs/response';
-import  from './libs/db';
+import {queryDB} from './libs/db';
 import _ from 'lodash';
 
 const gamesSql = "SELECT * From fixtures " +
