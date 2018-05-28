@@ -1,9 +1,7 @@
 import  { success } from './libs/response';
-import mySqlDb from './libs/db';
+import {queryDB} from './libs/db';
 
-export function main(event, context, callback) {
-    const db = new mySqlDb();
-    const con = db.getConnection();
+export async function main(event, context, callback) {
     const userId = event.requestContext.identity.cognitoIdentityId;
     // const userId = 'us-east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c';
     const sql = "SELECT fixtures.id, fixtures.date, homeTeam.name as homeTeamName, awayTeam.name as awayTeamName, " +
@@ -14,14 +12,7 @@ export function main(event, context, callback) {
         "JOIN teams awayTeam ON fixtures.awayTeamId = awayTeam.id " +
         `LEFT JOIN bets bet ON fixtures.id = bet.fixtureId AND bet.userId = "${userId} "` +
         "WHERE fixtures.date > NOW()";
-    con.query(sql, function (err, result) {
-        console.log(result);
-        if (err) {
-            console.log('*****************');
-            throw err;
-        }
 
-        con.end();
-        callback(null, success(result));
-    });
+    const result = await queryDB(sql);
+    callback(null, success(result));
 }

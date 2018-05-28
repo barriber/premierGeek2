@@ -15,3 +15,18 @@ export default class MySqlDb {
         return this.connection;
     }
 };
+
+export function queryDB(query, data) {
+    return new Promise((resolve, reject) => {
+        const db = new MySqlDb();
+        const con = db.getConnection();
+        con.query(query, data, (err, results) => {
+            if(err) {
+                reject(err);
+            }
+            con.end();
+            resolve(results);
+        })
+    })
+}
+
