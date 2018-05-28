@@ -7,27 +7,19 @@ import Header from './Header';
 import Login from "./Login";
 
 class App extends Component {
-    state = {
-        isAuthenticated: false,
-        isAuthenticating: true
-    }
-
     userHasAuthenticated = authenticated => {
         this.setState({isAuthenticated: authenticated});
     }
 
     render() {
-        const childProps = {
-            isAuthenticated: this.state.isAuthenticated,
-            userHasAuthenticated: this.userHasAuthenticated
-        };
+       const {onStateChange, authData} = this.props;
         return (
             <Router>
                 <Fragment>
-                    <Header childProps={childProps}/>
+                    <Header onStateChange={onStateChange} authData={authData}/>
 
                     <div className="flex flex-grow-1">
-                        <Routes childProps={childProps}/>
+                        <Routes />
                     </div>
 
                 </Fragment>

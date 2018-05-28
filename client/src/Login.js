@@ -21,7 +21,10 @@ export default class Login extends PureComponent {
     responseFacebook = async (loggedInUser) => {
         if (_.has(loggedInUser, 'accessToken')) {
             const {accessToken: token, expiresIn, email, name, picture} = loggedInUser;
-            const credentials = await Auth.federatedSignIn('facebook', {token}, loggedInUser);
+            const date = new Date();
+            const expires_at = expiresIn * 1000 + date.getTime();
+            console.log(expires_at);
+            const credentials = await Auth.federatedSignIn('facebook', {token, expires_at}, loggedInUser);
             await API.post("premiergeek-api-dev-fixtures", "users", {
                 body: {
                     name,

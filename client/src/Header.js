@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 export default class Header extends Component {
     logOut = async () => {
         await Auth.signOut();
-        window.location.reload();
+        this.props.onStateChange('signedOut')
     };
 
     render() {
@@ -15,6 +15,7 @@ export default class Header extends Component {
                     Premier Geek
                 </div>
                 <div>
+                    <img src={this.props.authData.picture.data.url} />
                     <div onClick={this.logOut}>
                         Logout
                     </div>
