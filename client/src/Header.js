@@ -10,12 +10,12 @@ export default class Header extends Component {
 
     render() {
         return (
-            <div className="flex items-center justify-between f4-ns mb5 pa3 bb ">
+            <div className="flex items-center justify-between f4-ns mb3 pa3 bb ">
                 <div>
                     Premier Geek
                 </div>
-                <div>
-                    <img src={this.props.authData.picture.data.url} />
+                <div className="flex items-center">
+                    <img className="mh3" src={this.props.authData.picture.data.url} />
                     <div onClick={this.logOut}>
                         Logout
                     </div>
