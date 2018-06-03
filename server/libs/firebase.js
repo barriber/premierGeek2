@@ -1,16 +1,21 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import admin from 'firebase-admin';
 
 export function firebaseInit(context) {
     context.callbackWaitsForEmptyEventLoop = false;  //<---Important
 
-    firebase.initializeApp( {
-        apiKey: 'AIzaSyD91F7xbasp2zPh633X_L7_1Js0IB5BVi8',
-        authDomain: 'premiergeek-3c409.firebaseapp.com',
-        projectId: 'premiergeek-3c409'// databaseURL: "https://premiergeek-3c409.firebaseio.com",
-        // storageBucket: "premiergeek-3c409.appspot.com",
-    });
+    const projectId = process.env.PROJECT_ID;
+    const clientEmail = process.env.CLIENT_EMAIL;
+    const privateKey = process.env.PRIVATE_KEY;
 
-    return firebase.firestore()
-
+    if(admin.apps.length === 0) {
+        admin.initializeApp({
+            credential: admin.credential.cert({
+                projectId,
+                clientEmail,
+                privateKey,
+            }),
+            databaseURL: "https://premiergeek-3c409.firebaseio.com",
+        })
+    }
+    return admin.firestore()
 }

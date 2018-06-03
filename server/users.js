@@ -1,14 +1,17 @@
 import _ from 'lodash';
 import {success} from './libs/response';
-import {queryDB} from './libs/db';
-
-const query = 'INSERT INTO users SET ? ' +
-    'ON DUPLICATE KEY UPDATE ?';
+import {firebaseInit} from './libs/firebase';
 
 export async function setUser(event, context, callback) {
-    const obj = _.pick(JSON.parse(event.body), ['name', 'logo', 'email']);
-    obj.id = event.requestContext.identity.cognitoIdentityId;
-    await queryDB(query, [obj, obj]);
-    
+    const user = _.pick(JSON.parse(event.body), ['name', 'logo', 'email']);
+    const userId = event.requestContext.identity.cognitoIdentityId;
+    // const userId = '1234';
+    // const user = {name: 'boris', log: 'png'}
+    try {
+        const db = firebaseInit(context);
+        await db.collection("users").doc(userId).set(user);
+    } catch (e) {
+      console.log(e);
+    }
     callback(null, success())
 }

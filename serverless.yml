@@ -5,6 +5,11 @@ provider:
   runtime: nodejs8.10
   stage: dev
   region: us-east-1
+  environment:
+      PROJECT_ID: ${file(./server/secrets/firebase.json):project_id}
+      CLIENT_ID: ${file(./server/secrets/firebase.json):client_id}
+      PRIVATE_KEY: ${file(./server/secrets/firebase.json):private_key}
+      CLIENT_EMAIL: ${file(./server/secrets/firebase.json):client_email}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -21,13 +26,13 @@ provider:
 #            - "Ref" : "ServerlessDeploymentBucket"
 #            - "/*"
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+    packagerOptions:
+          scripts:
+            - npm rebuild grpc --target=8.1.0 --target_arch=x64 --target_platform=linux --target_libc=glibc
 plugins:
   - serverless-webpack
   - serverless-offline
