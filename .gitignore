@@ -14,3 +14,5 @@ client/.cache
 client/dist
 
 secrets
+misc.xml
+modules.xml
