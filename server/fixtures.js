@@ -5,7 +5,35 @@ import {firebaseInit} from "./libs/firebase";
 
 export async function main(event, context, callback) {
     const db = firebaseInit(context);
-    callback(null, success())
+
+
+    const fixtures = await db.collection("fixtures")
+        .where('date', '>' , new Date())
+        .get();
+    const results = [];
+    fixtures.forEach(fixture => {
+        const {homeTeam, awayTeam, date} = fixture.data();
+        results.push ({
+            id: fixture.id,
+            homeTeam,
+            awayTeam,
+            date,
+        })
+    });
+
+    const fixturesPromise = results.map(async fixture => {
+        const home = await fixture.homeTeam.get();
+        const away = await fixture.awayTeam.get();
+        return {
+        id: fixture.id,
+        homeTeam: home.data(),
+        awayTeam: away.data(),
+        date: fixture.date
+    }
+    });
+
+    const final = await Promise.all(fixturesPromise);
+    callback(null, success(final));
 }
 
 //===GET TEAMS===
@@ -18,11 +46,12 @@ export async function main(event, context, callback) {
 // const batch = db.batch();
 // const {teams} = response.data;
 // teams.forEach(team => {
-//     const {name, crestUrl: logo, _links} = team;
+//     const {name, _links} = team;
 //     const link = _links.self.href;
 //     const split = link.split('/');
 //     const id = parseInt(split[split.length - 1]);
 //     const teamRef = db.collection('teams').doc(id.toString());
+//     const logo = `https://cdn2.iconfinder.com/data/icons/world-flag-icons/128/Flag_of_${name}.png`
 //     batch.set(teamRef, {
 //         name,
 //         logo,
@@ -30,13 +59,12 @@ export async function main(event, context, callback) {
 // });
 // try {
 //     await batch.commit();
+// callback(null, success());
 // } catch (e) {
 //     console.log(e);
 //
 //
 // }
-// callback(null, success());
-
 
 //=====GET FIXTURE====
 // const response = await axios.get('http://api.football-data.org/v1/competitions/467/fixtures', {
