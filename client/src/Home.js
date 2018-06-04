@@ -3,18 +3,17 @@ import _ from 'lodash';
 import {API} from "aws-amplify";
 import {parse, format} from 'date-fns'
 
-const teamNameClass = 'f2 mh3 w4 tc';
+const teamNameClass = 'f2 mh3 width-11 tc';
 
 class Home extends PureComponent {
     state = {};
 
     async componentDidMount() {
         try {
-            // let session = await Auth.userAttributes();
-            // console.log(Amp.FacebookOAuth.refreshFacebookToken());
             const fixtures = await API.get("premiergeek-api-dev-fixtures", "fixtures");
             const orderedGames = _.orderBy(fixtures, ['date'], ['asc']);
-            this.setState({fixtures: _.take(orderedGames, 5)});
+            // this.setState({fixtures: _.take(orderedGames, 5)});
+            this.setState({fixtures:orderedGames});
         } catch (e) {
             console.log(e);
         }
@@ -38,22 +37,25 @@ class Home extends PureComponent {
     };
 
     renderFixtures = () => {
-        return this.state.fixtures.map(fixture => {
-            const x = parse(fixture.date)
+        return this.state.fixtures.map(({date, homeTeam, awayTeam, id}) => {
+            if(!homeTeam){
+                return null;
+
+            }
             return (
-                <div className="mv3" key={fixture.id}>
-                    <div className="tc relative top-2">{format(x,'MMMM Do H:mm')} </div>
+                <div className="mv3" key={id}>
+                    <div className="tc relative top-2">{format(parse(date),'MMMM Do H:mm')} </div>
                     <div className="flex items-center flex-row" >
-                        <img src={fixture.homeLogo} alt={fixture.homeTeamName}/>
-                        <div className={teamNameClass}>{fixture.homeTeamName}</div>
-                        <input className="w2 tc" data-type="homeTeamScore" data-fixture={fixture.id}
-                               defaultValue={fixture.betHomeTeam}
+                        <img src={homeTeam.logo} alt={homeTeam.name}/>
+                        <div className={teamNameClass}>{homeTeam.name}</div>
+                        <input className="w2 tc" data-type="homeTeamScore" data-fixture={id}
+                               defaultValue={0}
                                onChange={this.onChange}/>
                         <div className="mh3 f3">VS</div>
-                        <input className="w2 tc" data-type="awayTeamScore" data-fixture={fixture.id}
-                               defaultValue={fixture.betAwayTeam} onChange={this.onChange}/>
-                        <div className={teamNameClass}>{fixture.awayTeamName}</div>
-                        <img src={fixture.awayLogo} alt={fixture.awayTeamName}/>
+                        <input className="w2 tc" data-type="awayTeamScore" data-fixture={id}
+                               defaultValue={0} onChange={this.onChange}/>
+                        <div className={teamNameClass}>{awayTeam.name}</div>
+                        <img src={awayTeam.logo} alt={awayTeam.name}/>
                     </div>
                 </div>
             )
