@@ -99,3 +99,6 @@ export async function main(event, context, callback) {
 // } catch (e) {
 //     console.log(e);
 // }
+
+
+// node_modules/.bin/sls invoke local -f fixtures --data {}
