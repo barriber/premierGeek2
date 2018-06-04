@@ -3,10 +3,12 @@ import {queryDB} from './libs/db';
 import _ from 'lodash';
 
 const gamesSql = "SELECT * From fixtures " +
-    "WHERE fixtures.date > NOW()"; //todo change!!
+    "WHERE fixtures.date > NOW()";
 
 const betsSql = "SELECT * From bets " +
     "WHERE bets.homeTeamScore IS NOT NULL AND bets.awayTeamScore IS NOT NULL";
+
+const usersSql = "SELECT * From users ";
 
 function  getGameStats(homeScore, awayScore) {
     let direction;
@@ -33,31 +35,32 @@ function analyzeFixtures(gamesResults) {
 
     return _.keyBy(fixtureResults, 'id');
 }
+
+function calculateScore(game, betStats) {
+    let score = 0;
+    if (game.direction === betStats.direction) {
+        score += 10;
+        if (game.goalDifference === betStats.goalDifference) {
+            score += 10;
+            if (game.homeTeamScore === betStats.homeTeamScore) {
+                score += 10;
+            }
+        }
+    }
+
+    return score;
+}
+
 export async function main(event, context, callback) {
-    const [gamesResults, bets] = await Promise.all([queryDB(gamesSql), queryDB(betsSql)]);
+    const [gamesResults, bets, users] = await Promise.all([queryDB(gamesSql), queryDB(betsSql), queryDB(usersSql)]);
     const gamesObj = analyzeFixtures(gamesResults);
     const analyzedBets = bets.map(({fixtureId, homeTeamScore, awayTeamScore, userId}) => {
         const betStats = getGameStats(homeTeamScore, awayTeamScore);
-        let score = 0;
         const game = gamesObj[fixtureId];
-        if (!game) {
-            return {}
-        }
-
-        if (game.direction === betStats.direction) {
-            score += 10;
-            if (game.goalDifference === betStats.goalDifference) {
-                score += 10;
-                if (game.homeTeamScore === betStats.homeTeamScore) {
-                    score += 10;
-                }
-            }
-        }
-
         return {
             fixtureId,
             userId,
-            score,
+            score: calculateScore(game, betStats),
             betHomeScore: homeTeamScore,
             betAwayScore: awayTeamScore,
             homeTeamScore: game.homeTeamScore,
@@ -65,7 +68,14 @@ export async function main(event, context, callback) {
         }
     });
 
-    const result = _.groupBy(analyzedBets, 'userId');
-
+    const userBets = _.groupBy(analyzedBets, 'userId');
+    const result = users.map(user => {
+        const bets = userBets[user.id];
+        return {
+            ...user,
+            bets,
+            totalScore: _.sumBy(bets, 'score'),
+        }
+    });
     callback(null, success(result));
 }
