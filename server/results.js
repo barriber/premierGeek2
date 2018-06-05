@@ -1,5 +1,5 @@
 import  { success } from './libs/response';
-import {queryDB} from './libs/db';
+import {firebaseInit} from "./libs/firebase";
 import _ from 'lodash';
 
 const gamesSql = "SELECT * From fixtures " +
@@ -51,31 +51,55 @@ function calculateScore(game, betStats) {
     return score;
 }
 
-export async function main(event, context, callback) {
-    const [gamesResults, bets, users] = await Promise.all([queryDB(gamesSql), queryDB(betsSql), queryDB(usersSql)]);
-    const gamesObj = analyzeFixtures(gamesResults);
-    const analyzedBets = bets.map(({fixtureId, homeTeamScore, awayTeamScore, userId}) => {
-        const betStats = getGameStats(homeTeamScore, awayTeamScore);
-        const game = gamesObj[fixtureId];
-        return {
-            fixtureId,
-            userId,
-            score: calculateScore(game, betStats),
-            betHomeScore: homeTeamScore,
-            betAwayScore: awayTeamScore,
-            homeTeamScore: game.homeTeamScore,
-            awayTeamScore: game.awayTeamScore
-        }
+const getUsersBets = async function(db) {
+    const users = await db.collection('users').get();
+    const betsObj = {};
+    const usersArray = [];
+    users.forEach(user => {
+        usersArray.push({userId: user.id, ...user.data()});
     });
+    const x = usersArray.map(async ({userId, ...other}) => {
+        const bets = await db.collection(`users/${userId}/bets`).get();
+        const userBets = {}
+        bets.forEach(bet => {
+            const userBet = bet.data();
+            userBets[bet.id] = userBet
 
-    const userBets = _.groupBy(analyzedBets, 'userId');
-    const result = users.map(user => {
-        const bets = userBets[user.id];
-        return {
-            ...user,
-            bets,
-            totalScore: _.sumBy(bets, 'score'),
-        }
-    });
-    callback(null, success(result));
+        });
+        return {userId, bets: userBets, ...other};
+    })
+
+    const usersData = await Promise.all(x);
+    return _.keyBy(usersData, 'userId');
+};
+
+export async function main(event, context, callback) {
+    const db = firebaseInit(context);
+    const x = await getUsersBets(db);
+    // const [gamesResults, bets, users] = await Promise.all([queryDB(gamesSql), queryDB(betsSql), queryDB(usersSql)]);
+    // const gamesObj = analyzeFixtures(gamesResults);
+    // const analyzedBets = bets.map(({fixtureId, homeTeamScore, awayTeamScore, userId}) => {
+    //     const betStats = getGameStats(homeTeamScore, awayTeamScore);
+    //     const game = gamesObj[fixtureId];
+    //     return {
+    //         fixtureId,
+    //         userId,
+    //         score: calculateScore(game, betStats),
+    //         betHomeScore: homeTeamScore,
+    //         betAwayScore: awayTeamScore,
+    //         homeTeamScore: game.homeTeamScore,
+    //         awayTeamScore: game.awayTeamScore
+    //     }
+    // });
+    //
+    // const userBets = _.groupBy(analyzedBets, 'userId');
+    // const result = users.map(user => {
+    //     const bets = userBets[user.id];
+    //     return {
+    //         ...user,
+    //         bets,
+    //         totalScore: _.sumBy(bets, 'score'),
+    //     }
+    // });
+    callback(null, success());
 }
