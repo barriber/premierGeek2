@@ -1,12 +1,19 @@
-import axios from 'axios';
+// import axios from 'axios';
 import  { success } from './libs/response';
 import {firebaseInit} from "./libs/firebase";
 
+const getUserBets = async function(db, userId) {
+    const usersBets = await db.collection('users').doc(userId)
+        .collection('bets').get();
+    const betsObj = {};
+    usersBets.forEach(bet => {
+        betsObj[bet.id] = bet.data();
+    });
 
-export async function main(event, context, callback) {
-    const db = firebaseInit(context);
+    return betsObj;
+};
 
-
+const getUpcomingFixtures = async function (db) {
     const fixtures = await db.collection("fixtures")
         .where('date', '>' , new Date())
         .get();
@@ -25,15 +32,29 @@ export async function main(event, context, callback) {
         const home = await fixture.homeTeam.get();
         const away = await fixture.awayTeam.get();
         return {
-        id: fixture.id,
-        homeTeam: home.data(),
-        awayTeam: away.data(),
-        date: fixture.date
-    }
+            id: fixture.id,
+            homeTeam: home.data(),
+            awayTeam: away.data(),
+            date: fixture.date
+        }
     });
 
-    const final = await Promise.all(fixturesPromise);
-    callback(null, success(final));
+    return await Promise.all(fixturesPromise);
+}
+export async function main(event, context, callback) {
+    const db = firebaseInit(context);
+    // const userId = 'us-east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c';
+    const userId = event.requestContext.identity.cognitoIdentityId;
+    const [userBets, fixtures] = await Promise.all([getUserBets(db,userId), getUpcomingFixtures(db) ]);
+    fixtures.forEach(fixture => {
+        const userBet = userBets[fixture.id];
+        if(userBet){
+           fixture.homeTeamBet = userBet.homeTeamScore;
+           fixture.awayTeamBet = userBet.awayTeamScore;
+        }
+    });
+
+    callback(null, success(fixtures));
 }
 
 //===GET TEAMS===

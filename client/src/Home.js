@@ -21,23 +21,29 @@ class Home extends PureComponent {
         this.setState({isLoading: false});
     }
 
-    placeBet = _.debounce(async (type, fixtureId, score) => {
+    onKeyPress = (e) => {
+        let key = e.keyCode || e.which;
+        key = String.fromCharCode(key);
+        const regex = /[0-9]|\./;
+        if (!regex.test(key)) {
+            e.returnValue = false;
+            if (e.preventDefault) e.preventDefault();
+        }
+    };
+
+    onBlur = async (e) => {
+        const {type, fixture} = e.target.dataset;
+        const score = parseInt(e.target.value);
         await API.post("premiergeek-api-dev-fixtures", "bet", {
             body: {
-                fixtureId,
+                fixtureId: fixture,
                 [type]: score,
             }
         });
-    }, 500);
-
-    onChange = (e) => {
-        const {type, fixture} = e.target.dataset;
-        const score = parseInt(e.target.value);
-        this.placeBet(type, fixture, score);
     };
 
     renderFixtures = () => {
-        return this.state.fixtures.map(({date, homeTeam, awayTeam, id}) => {
+        return this.state.fixtures.map(({date, homeTeam, awayTeam, id, homeTeamBet, awayTeamBet}) => {
             if(!homeTeam){
                 return null;
 
@@ -49,11 +55,12 @@ class Home extends PureComponent {
                         <img src={homeTeam.logo} alt={homeTeam.name}/>
                         <div className={teamNameClass}>{homeTeam.name}</div>
                         <input className="w2 tc" data-type="homeTeamScore" data-fixture={id}
-                               defaultValue={0}
-                               onChange={this.onChange}/>
+                               defaultValue={homeTeamBet} onKeyPress={this.onKeyPress}
+                               onBlur={this.onBlur}/>
                         <div className="mh3 f3">VS</div>
                         <input className="w2 tc" data-type="awayTeamScore" data-fixture={id}
-                               defaultValue={0} onChange={this.onChange}/>
+                               defaultValue={awayTeamBet} onKeyPress={this.onKeyPress}
+                               onBlur={this.onBlur}/>
                         <div className={teamNameClass}>{awayTeam.name}</div>
                         <img src={awayTeam.logo} alt={awayTeam.name}/>
                     </div>
@@ -73,7 +80,5 @@ class Home extends PureComponent {
         );
     }
 }
-
-Home.propTypes = {};
 
 export default Home;
