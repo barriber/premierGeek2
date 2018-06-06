@@ -12,6 +12,7 @@ class Routes extends Component {
             <Switch>
                 <AppliedRoute path="/" exact component={Home} />
                 <AppliedRoute path="/login" exact component={Login} />
+                <AppliedRoute path="/results" exact component={Login} />
                 <Route component={PageNotFound} />
             </Switch>
         );
