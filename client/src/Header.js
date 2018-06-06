@@ -14,6 +14,9 @@ export default class Header extends Component {
                 <div>
                     Premier Geek
                 </div>
+                <div>
+                    Results
+                </div>
                 <div className="flex items-center">
                     <img className="mh3" src={this.props.authData.picture.data.url} />
                     <div onClick={this.logOut}>

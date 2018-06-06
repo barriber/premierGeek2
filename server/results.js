@@ -91,5 +91,6 @@ export async function main(event, context, callback) {
         user.score = _.sumBy(user.results, 'score');
     });
 
-    callback(null, success(users));
+    const resultsArr = _.map(users, obj => (obj));
+    callback(null, success(resultsArr));
 }
