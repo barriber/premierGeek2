@@ -32,12 +32,14 @@ class Home extends PureComponent {
     };
 
     onBlur = async (e) => {
+        const {email} = this.props;
         const {type, fixture} = e.target.dataset;
         const score = parseInt(e.target.value);
         await API.post("premiergeek-api-dev-fixtures", "bet", {
             body: {
                 fixtureId: fixture,
                 [type]: score,
+                email,
             }
         });
     };
