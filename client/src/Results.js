@@ -19,27 +19,35 @@ export default class Results extends PureComponent {
 
     analyzeResults = (results) => {
         const sortedResults = _.orderBy(results, 'score');
-        sortedResults.map(result => {
+        return sortedResults.map((result, index) => {
             return (
-                <div>
-                {result.name}
-            </div>
+                <div className="flex justify-between items-center hover-bg-light-blue" key={result.userId}>
+                    <div className="flex items-center">
+                        <div className="f3 mh3 b">{index + 1}</div>
+                        <img className="" src={result.logo} />
+                        <div className="f3 mh3">
+                            {result.name}
+                        </div>
+                    </div>
+                    <div className="f3 mh3">
+                        {result.score}
+                    </div>
+                </div>
             )
         })
     }
 
     render() {
         const {results} = this.state;
-        if(results) {
-            this.analyzeResults(results);
-            console.log(results);
-        }
+
         return (
-            <div>
+            <div className="flex-grow-1">
                 <div>
                     Results
                 </div>
-                <div></div>
+                <div className="w-50 center">
+                    {this.analyzeResults(results)}
+                </div>
             </div>
         );
     }

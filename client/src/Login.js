@@ -9,15 +9,6 @@ export default class Login extends PureComponent {
         password: ""
     };
 
-
-    async componentDidMount() {
-        const user = await Auth.currentAuthenticatedUser()
-        if (user) {
-            console.log(user);
-        }
-    }
-
-
     responseFacebook = async (loggedInUser) => {
         if (_.has(loggedInUser, 'accessToken')) {
             const {accessToken: token, expiresIn, email, name, picture} = loggedInUser;
@@ -43,6 +34,7 @@ export default class Login extends PureComponent {
                     appId="1025583144188581"
                     fields="name,email,picture"
                     version="3.0"
+                    size="medium"
                     callback={this.responseFacebook}/>
             </div>
         );
