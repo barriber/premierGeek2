@@ -45,7 +45,7 @@ functions:
     handler: server/fixtures.main
     events:
      - http:
-         path: fixtures
+         path: fixtures/{id}
          method: get
          cors: true
          authorizer: aws_iam

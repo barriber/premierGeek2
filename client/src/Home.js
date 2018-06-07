@@ -10,7 +10,7 @@ class Home extends PureComponent {
 
     async componentDidMount() {
         try {
-            const fixtures = await API.get("premiergeek-api-dev-fixtures", "fixtures");
+            const fixtures = await API.get("premiergeek-api-dev-fixtures", `fixtures/${this.props.email}`);
             const orderedGames = _.orderBy(fixtures, ['date'], ['asc']);
             // this.setState({fixtures: _.take(orderedGames, 5)});
             this.setState({fixtures:orderedGames});

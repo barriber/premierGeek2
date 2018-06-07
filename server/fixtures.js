@@ -17,7 +17,9 @@ export async function main(event, context, callback) {
     // await generateTeams(db);
     // await generateFixtures(db);
     // const userId = 'us- east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c';
-    const userId = event.requestContext.identity.cognitoIdentityId;
+    // const userId = event.requestContext.identity.cognitoIdentityId;
+    const userId = event.pathParameters.id;
+    console.log('=====' + userId);
     const [userBets, fixtures] = await Promise.all([getUserBets(db,userId), getFixtures(db, '>') ]);
     fixtures.forEach(fixture => {
         const userBet = userBets[fixture.id];

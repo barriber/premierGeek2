@@ -1,5 +1,5 @@
-import axios from 'axios';
-import _ from 'lodash';
+// import axios from 'axios';
+// import _ from 'lodash';
 export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())

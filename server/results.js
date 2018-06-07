@@ -67,8 +67,7 @@ const getUsersBets = async (db) => {
 
 export async function main(event, context, callback) {
     const db = firebaseInit(context);
-    const users = await getUsersBets(db);
-    const gamesResults = await getFixtures(db, '<');
+    const [users, gamesResults] = await Promise.all[getUsersBets(db), getFixtures(db, '<')];
     const gamesObj = analyzeFixtures(gamesResults);
     _.forEach(users, user => {
         user.results = [];
