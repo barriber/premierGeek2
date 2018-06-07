@@ -1,3 +1,5 @@
+import axios from 'axios';
+import _ from 'lodash';
 export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())
@@ -25,7 +27,7 @@ export async function getFixtures (db, sign) {
 }
 
 const parseName = function (name) {
-    return name.split(' ').join('_');
+    return name.split(' ').join('_').toLowerCase();
 }
 
 export async function generateTeams(db) {
@@ -44,7 +46,7 @@ export async function generateTeams(db) {
         const split = link.split('/');
         const id = parseInt(split[split.length - 1]);
         const teamRef = db.collection('teams').doc(newName);
-        const logo = `https://cdn2.iconfinder.com/data/icons/world-flag-icons/128/Flag_of_${newName}.png`;
+        const logo = `https://cdn2.iconfinder.com/data/icons/world-flag-icons/128/Flag_of_${_.capitalize(newName)}.png`;
         batch.set(teamRef, {
             name,
             logo,
@@ -68,11 +70,16 @@ export async function generateFixtures(db) {
 
     const {fixtures} = response.data;
     const batch = db.batch();
-    fixtures.forEach(fixture => {
-        const { date, status, matchday: round, homeTeamName, awayTeamName } = fixture;
+    const upcomingGames = fixtures.filter(fixture => {
+        return new Date(fixture.date) > new Date() && fixture.status === 'TIMED'
+    });
+    upcomingGames.forEach(fixture => {
+        const { date, status, matchday: round, homeTeamName, awayTeamName, _links: link } = fixture;
         const awayTeamId = parseName(awayTeamName);
         const homeTeamId = parseName(homeTeamName);
-        const id = `${homeTeamId}-${awayTeamId}-round`;
+        const split = link.self.href.split('/');
+        const footballDataId = parseInt(split[split.length - 1]);
+        const id = `${round}-${homeTeamId}-${awayTeamId}`;
         const dateObj = new Date(date);
         const fixtureRef = db.collection('fixtures').doc(id.toString());
         batch.set(fixtureRef, {
@@ -82,7 +89,8 @@ export async function generateFixtures(db) {
             homeTeam: db.doc(`teams/${homeTeamId}`),
             awayTeam: db.doc(`teams/${awayTeamId}`),
             homeTeamScore: 0,
-            awayTeamScore: 0.
+            awayTeamScore: 0,
+            footballDataId
         })
     });
 

@@ -4,12 +4,11 @@ import {firebaseInit} from './libs/firebase';
 
 export async function setUser(event, context, callback) {
     const user = _.pick(JSON.parse(event.body), ['name', 'logo', 'email']);
-    const userId = event.requestContext.identity.cognitoIdentityId;
-    // const userId = '1234';
-    // const user = {name: 'boris', log: 'png'}
+    user.identifier = event.requestContext.identity.cognitoIdentityId;
+    // const user = {name: 'boris', log: 'png', email: 'borisber@gmail.com', identifier: '1234'}
     try {
         const db = firebaseInit(context);
-        await db.collection("users").doc(userId).set(user);
+        await db.collection("users").doc(user.email).set(user);
     } catch (e) {
       console.log(e);
     }

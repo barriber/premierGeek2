@@ -1,4 +1,3 @@
-// import axios from 'axios';
 import  { success } from './libs/response';
 import {firebaseInit} from "./libs/firebase";
 import {getFixtures, generateTeams, generateFixtures} from './libs/utils';
@@ -15,8 +14,10 @@ const getUserBets = async function(db, userId) {
 
 export async function main(event, context, callback) {
     const db = firebaseInit(context);
-    const userId = 'us-east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c';
-    // const userId = event.requestContext.identity.cognitoIdentityId;
+    // await generateTeams(db);
+    // await generateFixtures(db);
+    // const userId = 'us- east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c';
+    const userId = event.requestContext.identity.cognitoIdentityId;
     const [userBets, fixtures] = await Promise.all([getUserBets(db,userId), getFixtures(db, '>') ]);
     fixtures.forEach(fixture => {
         const userBet = userBets[fixture.id];
