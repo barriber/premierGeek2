@@ -12,8 +12,7 @@ class Home extends PureComponent {
         try {
             const fixtures = await API.get("premiergeek-api-dev-fixtures", `fixtures/${this.props.email}`);
             const orderedGames = _.orderBy(fixtures, ['date'], ['asc']);
-            // this.setState({fixtures: _.take(orderedGames, 5)});
-            this.setState({fixtures:orderedGames});
+            this.setState({fixtures: _.take(orderedGames, 11)});
         } catch (e) {
             console.log(e);
         }
@@ -56,11 +55,11 @@ class Home extends PureComponent {
                     <div className="flex items-center flex-row" >
                         <img src={homeTeam.logo} alt={homeTeam.name}/>
                         <div className={teamNameClass}>{homeTeam.name}</div>
-                        <input className="w2 tc" data-type="homeTeamScore" data-fixture={id}
+                        <input type="number" className="w2 tc" data-type="homeTeamScore" data-fixture={id}
                                defaultValue={homeTeamBet} onKeyPress={this.onKeyPress}
                                onBlur={this.onBlur}/>
                         <div className="mh3 f3">VS</div>
-                        <input className="w2 tc" data-type="awayTeamScore" data-fixture={id}
+                        <input type="number" className="w2 tc" data-type="awayTeamScore" data-fixture={id}
                                defaultValue={awayTeamBet} onKeyPress={this.onKeyPress}
                                onBlur={this.onBlur}/>
                         <div className={teamNameClass}>{awayTeam.name}</div>
