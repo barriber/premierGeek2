@@ -18,7 +18,7 @@ class App extends Component {
                 <Fragment>
                     <Header onStateChange={onStateChange} authData={authData}/>
 
-                    <div className="flex flex-grow-1">
+                    <div className="flex flex-grow-1 pt5">
                         <Routes authData={authData}/>
                     </div>
 
