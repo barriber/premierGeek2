@@ -15,8 +15,9 @@ function  getGameStats(homeScore, awayScore) {
     return {direction, goalDifference};
 }
 
-function analyzeFixtures(gamesResults) {
-    const fixtureResults = gamesResults.map(({homeTeamScore, awayTeamScore, id}) => {
+async function analyzeFixtures(db) {
+    const fixtures = await getFixtures(db, '<');
+    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id}) => {
         const gameStats = getGameStats(homeTeamScore, awayTeamScore);
         return {
             ...gameStats,
@@ -67,14 +68,13 @@ const getUsersBets = async (db) => {
 
 export async function main(event, context, callback) {
     const db = firebaseInit(context);
-    const [users, gamesResults] = await Promise.all([getUsersBets(db), getFixtures(db, '<')]);
-    const gamesObj = analyzeFixtures(gamesResults);
+    const [users, games] = await Promise.all([getUsersBets(db), analyzeFixtures(db)]);
     _.forEach(users, user => {
         user.results = [];
         _.forEach(user.bets, (bet, fixtureId) => {
             const {homeTeamScore, awayTeamScore} = bet;
             const betStats = getGameStats(homeTeamScore, awayTeamScore);
-            const game = gamesObj[fixtureId];
+            const game = games[fixtureId];
             if(!game) {
                 return;
             }
