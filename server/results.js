@@ -3,26 +3,28 @@ import {firebaseInit} from "./libs/firebase";
 import {getFixtures} from './libs/utils';
 import _ from 'lodash';
 
-function  getGameStats(homeScore, awayScore) {
+function  getGameStats(homeTeamScore, awayTeamScore) {
     let direction;
-    let goalDifference = homeScore - awayScore;
-    if (homeScore === awayScore) {
+    let goalDifference = homeTeamScore - awayTeamScore;
+    if (homeTeamScore === awayTeamScore) {
         direction = 0;
     } else {
-        direction = homeScore > awayScore ? 1 : 2;
+        direction = homeTeamScore > awayTeamScore ? 1 : 2;
     }
 
-    return {direction, goalDifference};
+    return {direction, goalDifference, homeTeamScore, awayTeamScore};
 }
 
 async function analyzeFixtures(db) {
     const fixtures = await getFixtures(db, '<');
-    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id}) => {
+    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id, homeTeam, awayteam}) => {
         const gameStats = getGameStats(homeTeamScore, awayTeamScore);
         return {
             ...gameStats,
             homeTeamScore,
             awayTeamScore,
+            homeTeam,
+            awayteam,
             id,
         }
     });
@@ -84,7 +86,9 @@ export async function main(event, context, callback) {
                 betHomeScore: homeTeamScore,
                 betAwayScore: awayTeamScore,
                 homeTeamScore: game.homeTeamScore,
-                awayTeamScore: game.awayTeamScore
+                awayTeamScore: game.awayTeamScore,
+                homeTeam: game.homeTeam,
+                awayteam: game.awayTeam,
             })
         });
         user.score = _.sumBy(user.results, 'score');

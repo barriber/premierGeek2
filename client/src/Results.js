@@ -18,18 +18,18 @@ export default class Results extends PureComponent {
     }
 
     analyzeResults = (results) => {
-        const sortedResults = _.orderBy(results, 'score');
+        const sortedResults = _.orderBy(results, 'score', ['desc']);
         return sortedResults.map((result, index) => {
             return (
-                <div className="flex justify-between items-center hover-bg-light-blue" key={result.userId}>
+                <div className="flex justify-between hover-bg-light-blue mv2 items-center" key={result.userId}>
                     <div className="flex items-center">
-                        <div className="f3 mh3 b">{index + 1}</div>
+                        <div className="mh3 b">{index + 1}</div>
                         <img className="" src={result.logo} />
-                        <div className="f3 mh3">
+                        <div className="mh3">
                             {result.name}
                         </div>
                     </div>
-                    <div className="f3 mh3">
+                    <div className="mh3">
                         {result.score}
                     </div>
                 </div>
@@ -41,13 +41,11 @@ export default class Results extends PureComponent {
         const {results} = this.state;
 
         return (
-            <div className="flex-grow-1">
-                <div>
-                    Results
+            <div className="w-50 center flex flex-column f3">
+                <div className="self-end">
+                    Score
                 </div>
-                <div className="w-50 center">
                     {this.analyzeResults(results)}
-                </div>
             </div>
         );
     }
