@@ -1,5 +1,5 @@
-// import axios from 'axios';
-// import _ from 'lodash';
+import axios from 'axios';
+import _ from 'lodash';
 export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())
@@ -26,7 +26,7 @@ export async function getFixtures (db, sign) {
     return await Promise.all(fixturesPromise);
 }
 
-const parseName = function (name) {
+const parseTeamName = function (name) {
     return name.split(' ').join('_').toLowerCase();
 }
 
@@ -41,7 +41,7 @@ export async function generateTeams(db) {
     const {teams} = response.data;
     teams.forEach(team => {
         const {name, _links} = team;
-        const newName = parseName(name);
+        const newName = parseTeamName(name);
         const link = _links.self.href;
         const split = link.split('/');
         const id = parseInt(split[split.length - 1]);
@@ -75,8 +75,8 @@ export async function generateFixtures(db) {
     });
     upcomingGames.forEach(fixture => {
         const { date, status, matchday: round, homeTeamName, awayTeamName, _links: link } = fixture;
-        const awayTeamId = parseName(awayTeamName);
-        const homeTeamId = parseName(homeTeamName);
+        const awayTeamId = parseTeamName(awayTeamName);
+        const homeTeamId = parseTeamName(homeTeamName);
         const split = link.self.href.split('/');
         const footballDataId = parseInt(split[split.length - 1]);
         const id = `${round}-${homeTeamId}-${awayTeamId}`;
@@ -102,3 +102,43 @@ export async function generateFixtures(db) {
 }
 
 
+export async function modifyResults(db) {
+    const now = new Date();
+    const currentHour = now.getHours();
+    if (currentHour > 10 && currentHour < 22) {
+        const lastUpdateRef = await db.collection('utils').doc('syncDates').get();
+        const lastUpdate = lastUpdateRef.data().results;
+        const modifiedGap = 420000; //7min
+        const fromLastTime = now - lastUpdate;
+        if (fromLastTime > modifiedGap) {
+            const response = await axios.get('http://api.football-data.org/v1/competitions/467/fixtures', {
+                headers: {
+                    'X-Auth-Token': process.env.FOOTBALL_DATA_ID,
+                },
+            });
+            const {fixtures} = response.data;
+            const batch = db.batch();
+            const inPlayFixtures = _.filter(fixtures, {status: 'IN_PLAY'});
+            _.forEach(inPlayFixtures, fixture => {
+                const {matchday: round, homeTeamName, awayTeamName, result} = fixture;
+                const awayTeamId = parseTeamName(awayTeamName);
+                const homeTeamId = parseTeamName(homeTeamName);
+                const id = `${round}-${homeTeamId}-${awayTeamId}`;
+                const fixtureRef = db.collection('fixtures').doc(id.toString());
+                batch.set(fixtureRef, {
+                    homeTeamScore: result.goalsHomeTeam || 0,
+                    awayTeamScore: result.goalsAwayTeam || 0,
+                }, {merge: true})
+            });
+            try {
+                const lasyUpdateRef = db.collection('utils').doc('syncDates');
+                batch.set(lasyUpdateRef, {results: new Date()}, {merge: true});
+                await batch.commit();
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    } else {
+        console.log('xxxx')
+    }
+}
