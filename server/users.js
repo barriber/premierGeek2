@@ -8,7 +8,7 @@ export async function setUser(event, context, callback) {
     // const user = {name: 'boris', log: 'png', email: 'borisber@gmail.com', identifier: '1234'}
     try {
         const db = firebaseInit(context);
-        await db.collection("users").doc(user.email).set(user);
+        await db.collection("users").doc(user.email || user.identifier).set(user);
     } catch (e) {
       console.log(e);
     }

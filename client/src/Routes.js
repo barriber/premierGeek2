@@ -12,9 +12,9 @@ export default class Routes extends Component {
         const {authData} = this.props;
         return (
             <Switch>
-                <AppliedRoute path="/" exact component={Home} props={authData}/>
+                <AppliedRoute path="/" exact component={Home} props={authData} />
                 <AppliedRoute path="/login" exact component={Login} />
-                <AppliedRoute path="/results" exact component={Results} />
+                <AppliedRoute path="/results" exact component={Results} props={authData} />
                 <Route component={PageNotFound} />
             </Switch>
         );

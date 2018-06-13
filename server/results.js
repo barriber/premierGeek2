@@ -17,14 +17,14 @@ function  getGameStats(homeTeamScore, awayTeamScore) {
 
 async function analyzeFixtures(db) {
     const fixtures = await getFixtures(db, '<');
-    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id, homeTeam, awayteam}) => {
+    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id, homeTeam, awayTeam}) => {
         const gameStats = getGameStats(homeTeamScore, awayTeamScore);
         return {
             ...gameStats,
             homeTeamScore,
             awayTeamScore,
             homeTeam,
-            awayteam,
+            awayTeam,
             id,
         }
     });
