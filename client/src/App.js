@@ -7,10 +7,6 @@ import Header from './Header';
 import Login from "./Login";
 
 class App extends Component {
-    userHasAuthenticated = authenticated => {
-        this.setState({isAuthenticated: authenticated});
-    }
-
     render() {
        const {onStateChange, authData} = this.props;
         return (

@@ -88,7 +88,7 @@ export async function main(event, context, callback) {
                 homeTeamScore: game.homeTeamScore,
                 awayTeamScore: game.awayTeamScore,
                 homeTeam: game.homeTeam,
-                awayteam: game.awayTeam,
+                awayTeam: game.awayTeam,
             })
         });
         user.score = _.sumBy(user.results, 'score');

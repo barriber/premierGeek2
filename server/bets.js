@@ -6,13 +6,13 @@ export async function placeBet(event, context, callback) {
     const body = JSON.parse(event.body);
     const bet = _.pick(body, ['homeTeamScore', 'awayTeamScore']);
     const fixtureId = body.fixtureId.toString();
-
+    const userId = body.email || event.requestContext.identity.cognitoIdentityId;
     try {
         const db = firebaseInit(context);
         const fixture = await db.collection('fixtures').doc(fixtureId).get();
         const {date: fixtureDate} = fixture.data();
         if( fixtureDate > new Date()) {
-            await db.collection(`users/${body.email}/bets`)
+            await db.collection(`users/${userId}/bets`)
                 .doc(fixtureId)
                 .set(bet, {merge: true});
             callback(null, success());
