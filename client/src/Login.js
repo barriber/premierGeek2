@@ -4,11 +4,6 @@ import {Auth, API} from "aws-amplify";
 import FacebookLogin from 'react-facebook-login';
 
 export default class Login extends PureComponent {
-    state = {
-        email: "",
-        password: ""
-    };
-
     responseFacebook = async (loggedInUser) => {
         if (_.has(loggedInUser, 'accessToken')) {
             const {accessToken: token, expiresIn, email, name, picture} = loggedInUser;
@@ -33,6 +28,7 @@ export default class Login extends PureComponent {
                 <FacebookLogin
                     appId="1025583144188581"
                     fields="name,email,picture"
+                    autoLoad={true}
                     version="3.0"
                     size="medium"
                     callback={this.responseFacebook}/>

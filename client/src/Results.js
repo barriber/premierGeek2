@@ -1,7 +1,8 @@
 import React, {PureComponent} from 'react';
-import {API, Auth} from "aws-amplify/lib/index";
+import {API, Auth, Cache} from "aws-amplify/lib/index";
 import Modal from 'react-modal';
 import _ from 'lodash';
+import {addMinutes, parse} from "date-fns";
 
 const customStyles = {
     content : {
@@ -10,7 +11,8 @@ const customStyles = {
         right                 : 'auto',
         bottom                : 'auto',
         marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)'
+        transform             : 'translate(-50%, -50%)',
+        maxHeight: '95%'
     }
 };
 
@@ -19,9 +21,14 @@ export default class Results extends PureComponent {
 
     async componentDidMount() {
         try {
-            const [results, credentials] = await Promise.all([
-                API.get('premiergeek-api-dev-fixtures', 'results'),
-                Auth.currentUserCredentials()]);
+            let results  = await Cache.getItem('results');
+            const credentials = await Auth.currentUserCredentials();
+            if(!results) {
+                results = await API.get('premiergeek-api-dev-fixtures', 'results');
+                const now = parse(new Date());
+                const cacheTime = addMinutes(now, 20);
+                await Cache.setItem('results', results, { expires: cacheTime.getTime() });
+            }
             this.setState({results, userIdentity: credentials.data.IdentityId});
         } catch (e) {
             console.log(e);
@@ -105,14 +112,15 @@ export default class Results extends PureComponent {
     }
 cd
     render() {
-        const {results, isModalOpen, userResults} = this.state;
+        const {results, isModalOpen} = this.state;
         return (
             <div className="w-50 center flex flex-column f3">
                 <div className="self-end">
                     Score
                 </div>
                     {this.analyzeResults(results)}
-                 <Modal style={ customStyles } isOpen={isModalOpen} onRequestClose={this.closeModal}>
+                 <Modal style={ customStyles } isOpen={isModalOpen} onRequestClose={this.closeModal}
+                        appElement={document.getElementById('app')}>
                      {this.userDetials()}
                      {this.userResults()}
                  </Modal>
