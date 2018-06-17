@@ -1,6 +1,6 @@
 import  { success } from './libs/response';
 import {firebaseInit} from "./libs/firebase";
-import {getFixtures, modifyResults,generateTeams, generateFixtures} from './libs/utils';
+import {getFixtures, generateTeams, generateFixtures} from './libs/utils';
 const getUserBets = async function(db, userId) {
     const usersBets = await db.collection('users').doc(userId)
         .collection('bets').get();
@@ -21,8 +21,7 @@ export async function main(event, context, callback) {
     console.log('=====' + userId);
     const [userBets, fixtures] = await Promise.all([
         getUserBets(db,userId),
-        getFixtures(db, '>'),
-        modifyResults(db)
+        getFixtures(db, '>')
         ]);
     fixtures.forEach(fixture => {
         const userBet = userBets[fixture.id];

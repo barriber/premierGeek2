@@ -5,17 +5,21 @@ import {firebaseInit} from "./libs/firebase";
 export async function placeBet(event, context, callback) {
     const body = JSON.parse(event.body);
     const bet = _.pick(body, ['homeTeamScore', 'awayTeamScore']);
+    bet.date = new Date();
     const fixtureId = body.fixtureId.toString();
     const userId = body.email || event.requestContext.identity.cognitoIdentityId;
     try {
         const db = firebaseInit(context);
         const fixture = await db.collection('fixtures').doc(fixtureId).get();
         const {date: fixtureDate} = fixture.data();
-        if( fixtureDate > new Date()) {
+        if( fixtureDate > bet.date) {
             await db.collection(`users/${userId}/bets`)
                 .doc(fixtureId)
                 .set(bet, {merge: true});
-            callback(null, success());
+            const newBet = await db.collection(`users/${userId}/bets`)
+                .doc(fixtureId)
+                .get();
+            callback(null, success(newBet.data()));
         } else {
             callback(null, failure("Invalid date time"));
         }

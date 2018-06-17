@@ -26,7 +26,7 @@ export default class Results extends PureComponent {
             if(!results) {
                 results = await API.get('premiergeek-api-dev-fixtures', 'results');
                 const now = parse(new Date());
-                const cacheTime = addMinutes(now, 20);
+                const cacheTime = addMinutes(now, 10);
                 await Cache.setItem('results', results, { expires: cacheTime.getTime() });
             }
             this.setState({results, userIdentity: credentials.data.IdentityId});
@@ -47,7 +47,8 @@ export default class Results extends PureComponent {
         if(loggedInUser && loggedInUser.paid) {
            finalResults = _.filter(results, {paid: true})
         }
-        const sortedResults = _.orderBy(finalResults, 'score', ['desc']);
+        const sortedResults = _.orderBy(finalResults, ['score', 'exactBet', 'goalDifference', 'direction'],
+            ['desc','desc','desc','desc']);
         return sortedResults.map((result, index) => {
             return (
                 <div className="flex justify-between hover-bg-light-blue mv2 items-center pointer"
@@ -91,7 +92,7 @@ export default class Results extends PureComponent {
         if(!this.state.isModalOpen) {
             return null;
         }
-        const userResults = this.state.userResults.results;
+        const userResults = _.orderBy(this.state.userResults.results, ['date'], ['desc']);
         return userResults.map(result => {
             return (
                 <div key={result.fixtureId} className="flex f2 items-center justify-between">

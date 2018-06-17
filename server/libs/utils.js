@@ -1,5 +1,8 @@
 import axios from 'axios';
 import _ from 'lodash';
+
+const miunte = 60000;
+const twoHours =  miunte * 60 * 3;
 export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())
@@ -108,7 +111,7 @@ export async function modifyResults(db) {
     if (currentHour > 10 && currentHour < 22) {
         const lastUpdateRef = await db.collection('utils').doc('syncDates').get();
         const lastUpdate = lastUpdateRef.data().results;
-        const modifiedGap = 420000; //7min
+        const modifiedGap = miunte * 7; //7min
         const fromLastTime = now - lastUpdate;
         if (fromLastTime > modifiedGap) {
             const response = await axios.get('http://api.football-data.org/v1/competitions/467/fixtures', {
@@ -118,7 +121,9 @@ export async function modifyResults(db) {
             });
             const {fixtures} = response.data;
             const batch = db.batch();
-            const inPlayFixtures = _.filter(fixtures, {status: 'IN_PLAY'});
+            const inPlayFixtures = _.filter(fixtures, ({status, date}) => {
+                return (status === 'IN_PLAY') || (status === 'FINISHED' && (now - date) < twoHours);
+            });
             _.forEach(inPlayFixtures, fixture => {
                 const {matchday: round, homeTeamName, awayTeamName, result} = fixture;
                 const awayTeamId = parseTeamName(awayTeamName);
@@ -128,17 +133,18 @@ export async function modifyResults(db) {
                 batch.set(fixtureRef, {
                     homeTeamScore: result.goalsHomeTeam || 0,
                     awayTeamScore: result.goalsAwayTeam || 0,
+                    status: fixture.status,
                 }, {merge: true})
             });
             try {
                 const lasyUpdateRef = db.collection('utils').doc('syncDates');
                 batch.set(lasyUpdateRef, {results: new Date()}, {merge: true});
                 await batch.commit();
+                return;
             } catch (e) {
                 console.log(e);
             }
         }
-    } else {
-        console.log('xxxx')
     }
+    return Promise.resolve();
 }
