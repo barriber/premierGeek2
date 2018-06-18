@@ -1,6 +1,6 @@
 import  { success } from './libs/response';
 import {firebaseInit} from "./libs/firebase";
-import {getFixtures} from './libs/utils';
+import {getAllUsers, getFixtures, modifyResults} from './libs/utils';
 import _ from 'lodash';
 
 function  getGameStats(homeTeamScore, awayTeamScore) {
@@ -16,20 +16,29 @@ function  getGameStats(homeTeamScore, awayTeamScore) {
 }
 
 async function analyzeFixtures(db) {
-    const fixtures = await getFixtures(db, '<');
-    const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id, homeTeam, awayTeam}) => {
-        const gameStats = getGameStats(homeTeamScore, awayTeamScore);
-        return {
-            ...gameStats,
-            homeTeamScore,
-            awayTeamScore,
-            homeTeam,
-            awayTeam,
-            id,
-        }
-    });
+    try {
+        console.log('BEFORE GET FIXTURES');
+        const fixtures = await getFixtures(db, '<');
+        console.log('AFTER GET FIXTURES');
+        const fixtureResults = fixtures.map(({homeTeamScore, awayTeamScore, id, homeTeam, awayTeam, date}) => {
+            const gameStats = getGameStats(homeTeamScore, awayTeamScore);
+            return {
+                ...gameStats,
+                homeTeamScore,
+                awayTeamScore,
+                homeTeam,
+                awayTeam,
+                id,
+                date,
+            }
+        });
 
-    return _.keyBy(fixtureResults, 'id');
+
+        console.log('GOT FIXTURES!!!')
+        return _.keyBy(fixtureResults, 'id');
+    } catch (e){
+        console.log(e);
+    }
 }
 
 function calculateScore(game, betStats) {
@@ -48,29 +57,40 @@ function calculateScore(game, betStats) {
 }
 
 const getUsersBets = async (db) => {
-    const users = await db.collection('users').get();
-    const usersArray = [];
-    users.forEach(user => {
-        usersArray.push({userId: user.id, ...user.data()});
-    });
-    const x = usersArray.map(async ({userId, ...other}) => {
-        const bets = await db.collection(`users/${userId}/bets`).get();
-        const userBets = {};
-        bets.forEach(bet => {
-            const userBet = bet.data();
-            userBets[bet.id] = userBet
+    try {
+        const usersArray = await getAllUsers(db);
+        const x = usersArray.map(async ({userId, ...other}) => {
+            const bets = await db.collection(`users/${userId}/bets`).get();
+            const userBets = {};
+            bets.forEach(bet => {
+                const userBet = bet.data();
+                userBets[bet.id] = userBet
 
-        });
-        return {userId, bets: userBets, ...other};
-    })
+            });
+            return {userId, bets: userBets, ...other};
+        })
 
-    const usersData = await Promise.all(x);
-    return _.keyBy(usersData, 'userId');
+        const usersData = await Promise.all(x);
+        console.log('ALL USERS RETURN')
+        return _.keyBy(usersData, 'userId');
+    } catch (e) {
+        console.log('ussers error!!!');
+        console.log(e);
+    }
 };
 
 export async function main(event, context, callback) {
+    try {
     const db = firebaseInit(context);
-    const [users, games] = await Promise.all([getUsersBets(db), analyzeFixtures(db)]);
+    console.log('BEFORE DB Games');
+        // const games = await analyzeFixtures(db);
+        // console.log('AFTER DB Games');
+        //
+        // const users = await getUsersBets(db);
+        // console.log('AFTER DB USERS');
+        const [users, games] = await Promise.all([getUsersBets(db), analyzeFixtures(db), modifyResults(db)]);
+
+    console.log('AFTER DB REQUEST');
     _.forEach(users, user => {
         user.results = [];
         _.forEach(user.bets, (bet, fixtureId) => {
@@ -89,11 +109,21 @@ export async function main(event, context, callback) {
                 awayTeamScore: game.awayTeamScore,
                 homeTeam: game.homeTeam,
                 awayTeam: game.awayTeam,
+                date: game.date,
             })
         });
+        const scoreTypes = _.countBy(user.results, 'score');
         user.score = _.sumBy(user.results, 'score');
+        user.exactBet = scoreTypes[30] || 0;
+        user.goalDifference = scoreTypes[20] || 0;
+        user.direction = scoreTypes[10] || 0;
     });
 
     const resultsArr = _.map(users, obj => (obj));
     callback(null, success(resultsArr));
+    } catch (e) {
+        console.log('ERRRROR');
+        console.log(e);
+
+    }
 }

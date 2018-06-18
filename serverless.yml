@@ -8,7 +8,7 @@ provider:
   environment:
       PROJECT_ID: ${file(./server/secrets/firebase.json):project_id}
       CLIENT_ID: ${file(./server/secrets/firebase.json):client_id}
-      PRIVATE_KEY: ${file(./server/secrets/firebase.json):private_key}
+#      PRIVATE_KEY: ${file(./server/secrets/firebase.json):private_key}
       CLIENT_EMAIL: ${file(./server/secrets/firebase.json):client_email}
       FOOTBALL_DATA_ID: "5aab4c2c6c8a4af188e5be626459fb78"
   iamRoleStatements:
@@ -73,6 +73,14 @@ functions:
          method: get
          cors: true
          authorizer: aws_iam
+  matchZone:
+     handler: server/matchZone.main
+     events:
+      - http:
+          path: matchZone
+          method: get
+          cors: true
+          authorizer: aws_iam
 resources:
   Resources:
     GatewayResponseDefault4XX:

@@ -7,6 +7,12 @@ export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())
         .get();
+
+    return await getFixturesData(fixtures);
+
+}
+
+export async function getFixturesData(fixtures) {
     const results = [];
     fixtures.forEach(fixture => {
         results.push ({
@@ -147,4 +153,16 @@ export async function modifyResults(db) {
         }
     }
     return Promise.resolve();
+}
+
+export async function getAllUsers(db) {
+    console.log('GET USERS');
+    const users = await db.collection('users').get();
+    console.log('AGTER GET users!');
+    const usersArray = [];
+    users.forEach(user => {
+        usersArray.push({userId: user.id, ...user.data()});
+    });
+
+    return usersArray;
 }
