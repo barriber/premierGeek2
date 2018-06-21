@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import Home from './Home';
 import Login from './Login';
 import Results from './Results';
+import MatchZone from './MatchZone';
 import PageNotFound from './PageNotFound';
 import AppliedRoute from './AppliedRoute';
 
@@ -15,6 +16,7 @@ export default class Routes extends Component {
                 <AppliedRoute path="/" exact component={Home} props={authData} />
                 <AppliedRoute path="/login" exact component={Login} />
                 <AppliedRoute path="/results" exact component={Results} props={authData} />
+                <AppliedRoute path="/zone" exact component={MatchZone} props={authData} />
                 <Route component={PageNotFound} />
             </Switch>
         );

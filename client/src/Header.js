@@ -19,6 +19,9 @@ export default class Header extends Component {
                     <Link to="/results" className={linkClass}>
                         Results
                     </Link>
+                    <Link to="/zone" className={linkClass}>
+                        Match Zone
+                    </Link>
 
                 </div>
                 <div className="flex items-center">
