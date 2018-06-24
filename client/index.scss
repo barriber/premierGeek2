@@ -15,4 +15,12 @@
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
   }
+  .hollow-number {
+    border: 1px solid transparent;
+    border-radius: 100%;
+    padding: 1px 4px 0px 4px;
+    text-align: center;
+    width: 30px;
+  }
+
 }

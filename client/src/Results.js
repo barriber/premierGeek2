@@ -3,7 +3,7 @@ import {API, Auth, Cache} from "aws-amplify/lib/index";
 import Modal from 'react-modal';
 import _ from 'lodash';
 import {addMinutes, parse} from "date-fns";
-
+const baggeClass = "mh3 f4 hollow-number";
 const customStyles = {
     content : {
         top                   : '50%',
@@ -51,7 +51,7 @@ export default class Results extends PureComponent {
             ['desc','desc','desc','desc']);
         return sortedResults.map((result, index) => {
             return (
-                <div className="flex justify-between hover-bg-light-blue mv2 items-center pointer"
+                <div className="flex justify-between hover-bg-light-blue mv2 items-center pointer f3"
                      onClick={() => this.openUserResults(result)} key={result.userId}>
                     <div className="flex items-center">
                         <div className="mh3 b w2">{index + 1}</div>
@@ -60,8 +60,19 @@ export default class Results extends PureComponent {
                             {result.name}
                         </div>
                     </div>
-                    <div className="mh3">
+                    <div className="flex items-center ">
+                        <div className={`${baggeClass} bg-yellow`}>
+                            {result.exactBet}
+                        </div>
+                        <div className={`${baggeClass} bg-silver`}>
+                            {result.goalDifference}
+                        </div>
+                        <div className={`${baggeClass} bg-gold`}>
+                            {result.direction}
+                        </div>
+                        <div className="">
                         {result.score}
+                        </div>
                     </div>
                 </div>
             )
