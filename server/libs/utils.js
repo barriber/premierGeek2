@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 
 const miunte = 60000;
-const twoHours =  miunte * 60 * 3;
+const twoHours =  miunte * 60 * 2;
 export async function getFixtures (db, sign) {
     const fixtures = await db.collection("fixtures")
         .where('date', sign , new Date())
@@ -128,7 +128,7 @@ export async function modifyResults(db) {
             const {fixtures} = response.data;
             const batch = db.batch();
             const inPlayFixtures = _.filter(fixtures, ({status, date}) => {
-                return (status === 'IN_PLAY') || (status === 'FINISHED' && (now - date) < twoHours);
+                return (status === 'IN_PLAY') || (status === 'FINISHED' && (now - new Date(date)) < twoHours);
             });
             _.forEach(inPlayFixtures, fixture => {
                 const {matchday: round, homeTeamName, awayTeamName, result} = fixture;

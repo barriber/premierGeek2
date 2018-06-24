@@ -3,7 +3,7 @@ import {API, Auth, Cache} from "aws-amplify/lib/index";
 import Modal from 'react-modal';
 import _ from 'lodash';
 import {addMinutes, parse} from "date-fns";
-const baggeClass = "mh3 f4 hollow-number";
+const baggeClass = "mh1 f4 hollow-number";
 const customStyles = {
     content : {
         top                   : '50%',
@@ -70,7 +70,7 @@ export default class Results extends PureComponent {
                         <div className={`${baggeClass} bg-gold`}>
                             {result.direction}
                         </div>
-                        <div className="">
+                        <div className="ml3">
                         {result.score}
                         </div>
                     </div>
@@ -126,7 +126,7 @@ cd
     render() {
         const {results, isModalOpen} = this.state;
         return (
-            <div className="w-50 center flex flex-column f3">
+            <div className="w-60 center flex flex-column f3">
                 <div className="self-end">
                     Score
                 </div>

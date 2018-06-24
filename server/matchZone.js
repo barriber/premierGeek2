@@ -9,13 +9,7 @@ export async function main(event, context, callback) {
     if (currentHour > 10 && currentHour < 22) {
         const db = firebaseInit(context);
         let fixturesQuery = await db.collection("fixtures").where('status', '==', 'IN_PLAY').get();
-
-        const userId = _.get(event, "requestContext.identity.cognitoIdentityId");
-        if(userId !== 'us-east-1:ac69580b-ce54-4e10-a6ed-c83828c5419c') {
-            fixturesQuery = fixturesQuery.where('date', '<', new Date());
-        }
-        const fixtures = await fixturesQuery.get();
-        const currentMatches = await getFixturesData(fixtures);
+        const currentMatches = await getFixturesData(fixturesQuery);
         if(currentMatches.length > 0) {
             const usersArray = await getAllUsers(db);
             const x = await usersArray.map(async ({userId, ...other}) => {
